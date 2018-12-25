@@ -1,5 +1,5 @@
 const buttonSelectors = require('./button-selectors');
-const { prefixSelectors } = require('../../utils/prefixSelectors');
+const { prefixSelectors } = require('../../tools/generate');
 
 const generate = options => {
   let opts = {

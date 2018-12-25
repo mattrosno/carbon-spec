@@ -1,5 +1,5 @@
 const breadcrumbSelectors = require('./breadcrumb-selectors');
-const { prefixSelectors } = require('../../utils/prefixSelectors');
+const { prefixSelectors } = require('../../tools/generate');
 
 const generate = options => {
   let opts = {

@@ -1,3 +1,7 @@
+/**
+ * Available CSS selectors for Accordion component
+ * @module accordion/selectors
+ */
 const selectors = {
   default: {
     root: 'accordion',

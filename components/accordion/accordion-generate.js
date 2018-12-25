@@ -1,51 +1,73 @@
-const accordionSelectors = require('./accordion-selectors');
-const { prefixSelectors } = require('../../utils/prefixSelectors');
+/**
+ * Template configuration generate functions for Accordion component
+ * @module accordion/generate
+ */
+const cloneDeep = require('lodash/cloneDeep');
+const merge = require('lodash/merge');
 
-const generate = options => {
-  let opts = {
-    attributes: {
-      role: 'tablist',
-      'aria-multiselectable': true,
+/**
+ * Generate Accordion template context object
+ * @param {object} options - user-defined options
+ * @return {object} combines user-defined options default configurations
+ */
+const generate = function(options) {
+  let opts = merge(
+    {
+      element: 'ul',
     },
-    ...options,
-  };
-  const selectors = prefixSelectors(accordionSelectors, opts.prefix);
+    options
+  );
 
-  opts.classes = selectors.default;
-
-  return opts;
-};
-
-const generateAccordionItem = options => {
-  let opts = {
-    attributes: {
-      role: 'presentation',
-    },
-    ...options,
-  };
-  const selectors = prefixSelectors(accordionSelectors, opts.prefix);
-
-  opts.classes = selectors.default;
-
-  if (opts.active) {
-    opts.classes.item += ` ${selectors.modifiers.active.item}`;
+  if (this.selectors) {
+    opts.classes = cloneDeep(this.selectors.default);
   }
 
   return opts;
 };
 
-const generateAccordionHeading = options => {
-  let opts = {
-    attributes: {
-      role: 'tab',
-      type: 'button',
+/**
+ * Generate Accordion Item template context object
+ * @param {object} options - user-defined options
+ * @return {object} combines user-defined options default configurations
+ */
+const generateItem = function(options) {
+  let opts = merge(
+    {
+      element: 'li',
     },
-    ...options,
-  };
+    options
+  );
+
+  if (this.selectors) {
+    opts.classes = cloneDeep(this.selectors.default);
+
+    if (opts.active) {
+      opts.classes.item += ` ${this.selectors.modifiers.active.item}`;
+    }
+  }
+
+  opts.heading = opts.heading || {};
+  merge(opts.heading, {
+    attributes: {
+      'aria-expanded': `${!!opts.active}`,
+    },
+  });
+
+  if (opts.paneId) {
+    opts.heading.attributes['aria-controls'] = opts.paneId;
+
+    opts.content = opts.content || {};
+    merge(opts.content, {
+      attributes: {
+        id: opts.paneId,
+      },
+    });
+  }
 
   return opts;
 };
 
-module.exports = generate;
-module.exports.generateAccordionItem = generateAccordionItem;
-module.exports.generateAccordionHeading = generateAccordionHeading;
+module.exports = {
+  generate,
+  generateItem,
+};
