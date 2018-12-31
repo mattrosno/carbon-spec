@@ -21,7 +21,8 @@
     "lodash": "^4.17.11",
     "nodemon": "^1.18.4",
     "prettier": "^1.14.2",
-    "spec-md": "^0.6.0"
+    "spec-md": "^0.6.0",
+    "tabbable": "^3.1.1"
   },
   "commitlint": {
     "extends": [
@@ -36,7 +37,7 @@
   },
   "prettier": {
     "jsxBracketSameLine": true,
-    "printWidth": 80,
+    "printWidth": 130,
     "singleQuote": true,
     "trailingComma": "es5"
   }

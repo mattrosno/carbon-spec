@@ -11,7 +11,7 @@ const run = function(mount) {
       mount();
     });
 
-    describe('Accordion Content', () => {
+    describe('Accordion Template', () => {
       it('It shows all headings', () => {
         cy.get(`.${prefix}--accordion > li`).should('have.length', 4);
 
@@ -32,9 +32,7 @@ const run = function(mount) {
           .find(`.${prefix}--accordion__content`)
           .should('not.be.visible');
       });
-    });
 
-    describe('Accordion Template', () => {
       it('It should have correct elements', () => {
         cy.get(`.${prefix}--accordion`).should($ul => {
           $ul.map((i, el) => {
@@ -45,6 +43,12 @@ const run = function(mount) {
         cy.get(`.${prefix}--accordion__item`).should($li => {
           $li.map((i, el) => {
             return expect(el.tagName).to.equal('LI');
+          });
+        });
+
+        cy.get(`.${prefix}--accordion__heading`).should($li => {
+          $li.map((i, el) => {
+            return expect(el.tagName).to.equal('BUTTON');
           });
         });
       });
@@ -116,8 +120,30 @@ const run = function(mount) {
         cy.get(`.${prefix}--accordion__heading`)
           .first()
           .click()
+          .parent()
           .find(`.${prefix}--accordion__content`)
           .should('not.be.visible');
+      });
+
+      it('It should toggle item again when clicked again', () => {
+        cy.get(`.${prefix}--accordion__heading`)
+          .first()
+          .click()
+          .then($el => {
+            cy.wrap($el, { log: false })
+              .parent()
+              .find(`.${prefix}--accordion__content`)
+              .should('not.be.visible');
+          })
+          .parent()
+          .find(`.${prefix}--accordion__heading`)
+          .click()
+          .then($el => {
+            cy.wrap($el, { log: false })
+              .parent()
+              .find(`.${prefix}--accordion__content`)
+              .should('be.visible');
+          });
       });
 
       it('It should not toggle when item content is clicked', () => {
@@ -127,17 +153,62 @@ const run = function(mount) {
           .should('be.visible');
       });
 
-      // TODO
-      // it('It should preserve custom class names when toggling item', () => {});
+      it('It should preserve custom class names when toggling item', () => {
+        cy.get(`.${prefix}--accordion__heading`)
+          .first()
+          .parent()
+          .then($li => {
+            $li.addClass('some-class');
+          })
+          .find(`.${prefix}--accordion__heading`)
+          .click()
+          .parent()
+          .should('have.class', 'some-class');
+      });
 
-      // TODO https://github.com/cypress-io/cypress/issues/299#issuecomment-380197761
-      // it('It should tab to next item', () => { });
-      //
-      // it('It should toggle item expansion on ENTER key', () => { });
-      //
-      // it('It should toggle item expansion on SPACE key', () => {});
-      //
-      // it('It should keep current focus on ESC key', () => {});
+      it('It should TAB to first item', () => {
+        cy.get('body')
+          .focus()
+          .typeTab()
+          .should('have.attr', 'aria-controls')
+          .and('eq', 'pane1');
+      });
+
+      it('It should TAB to next item', () => {
+        cy.get(`.${prefix}--accordion__heading`)
+          .first()
+          .focus()
+          .typeTab()
+          .should('have.attr', 'aria-controls')
+          .and('eq', 'pane2');
+      });
+
+      it('It should toggle item expansion on ENTER key', () => {
+        cy.get(`.${prefix}--accordion__heading`)
+          .first()
+          .focus()
+          .typeEnter()
+          .siblings(`.${prefix}--accordion__content`)
+          .should('not.be.visible');
+      });
+
+      it('It should toggle item expansion on SPACE key', () => {
+        cy.get(`.${prefix}--accordion__heading`)
+          .eq(1)
+          .focus()
+          .typeSpace()
+          .siblings(`.${prefix}--accordion__content`)
+          .should('be.visible');
+      });
+
+      it('It should not toggle item expansion on ESC key', () => {
+        cy.get(`.${prefix}--accordion__heading`)
+          .eq(1)
+          .focus()
+          .typeEsc()
+          .siblings(`.${prefix}--accordion__content`)
+          .should('not.be.visible');
+      });
     });
   });
 };
