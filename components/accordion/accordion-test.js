@@ -76,17 +76,11 @@ const run = function(mount) {
       });
 
       it('It should have correct icon classes', () => {
-        cy.get(`.${prefix}--accordion__heading > svg`).should(
-          'have.class',
-          `${prefix}--accordion__arrow`
-        );
+        cy.get(`.${prefix}--accordion__heading > svg`).should('have.class', `${prefix}--accordion__arrow`);
       });
 
       it('It should have correct content classes', () => {
-        cy.get(`.${prefix}--accordion__item > div`).should(
-          'have.class',
-          `${prefix}--accordion__content`
-        );
+        cy.get(`.${prefix}--accordion__item > div`).should('have.class', `${prefix}--accordion__content`);
       });
 
       it("It should have item pane id that matches item's aria attribute", () => {
@@ -94,11 +88,7 @@ const run = function(mount) {
           cy.get(`.${prefix}--accordion__content`)
             .invoke('attr', 'id')
             .then(paneId => {
-              cy.get(`.${prefix}--accordion__heading`).should(
-                'have.attr',
-                'aria-controls',
-                paneId
-              );
+              cy.get(`.${prefix}--accordion__heading`).should('have.attr', 'aria-controls', paneId);
             });
         });
       });

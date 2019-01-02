@@ -53,10 +53,11 @@ const generateItem = function(options) {
     },
   });
 
+  opts.content = opts.content || {};
+
   if (opts.paneId) {
     opts.heading.attributes['aria-controls'] = opts.paneId;
 
-    opts.content = opts.content || {};
     merge(opts.content, {
       attributes: {
         id: opts.paneId,
