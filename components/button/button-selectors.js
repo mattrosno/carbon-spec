@@ -1,7 +1,10 @@
+/**
+ * Available CSS selectors for Button component
+ * @module button/selectors
+ */
 const selectors = {
   default: {
     root: 'btn',
-    content: 'btn__content',
     icon: 'btn__icon',
   },
   variants: {

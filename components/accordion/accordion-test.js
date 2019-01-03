@@ -8,11 +8,11 @@ const run = function(mount) {
 
   describe('Accordion', () => {
     beforeEach(() => {
-      mount();
+      mount('variants.default');
     });
 
     describe('Accordion Template', () => {
-      it('It shows all headings', () => {
+      it('It shows all heading content', () => {
         cy.get(`.${prefix}--accordion > li`).should('have.length', 4);
 
         cy.get(`.${prefix}--accordion`).contains('Section 1');

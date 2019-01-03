@@ -1,80 +1,118 @@
-const generate = require('./button-generate');
-const selectors = require('./button-selectors');
-const { flattenDemosObject } = require('../../tools/config');
+/**
+ * Component configuration for the Button component
+ * @module button
+ */
+const startCase = require('lodash/startCase');
+const { prefixSelectors } = require('../../tools/generate');
+const buttonSelectors = require('./button-selectors');
+const { generate } = require('./button-generate');
 
 /**
  * Creates a button template configuration for a variant
- * @type {fractalDemo}
+ * @returns {object} fractal demo object
  */
-const variants = [];
-Object.keys(selectors.variants).forEach(variant => {
-  variants.push({
-    name: variant,
-    label: variant,
-    context: generate({
-      variant,
-    }),
-  });
-});
+const variantButtons = function() {
+  const variants = {};
 
-/**
- * Creates a button template configuration with the 'small' modifier
- * @type {fractalDemo}
- */
-const small = {
-  name: 'small',
-  label: 'Small',
-  context: generate({
-    variant: 'primary',
-    size: 'small',
-  }),
+  Object.keys(this.selectors.variants).forEach(variant => {
+    variants[variant] = {
+      name: variant,
+      label: startCase(variant),
+      context: generate.apply(this, [
+        {
+          variant,
+        },
+      ]),
+    };
+  });
+
+  return variants;
 };
 
-const disabled = {
-  name: 'disabled',
-  label: 'Disabled',
-  context: generate({
-    disbled: true,
-  }),
+/**
+ * Modifier: Anchor
+ * @returns {object} fractal demo object
+ */
+const anchorButton = function() {
+  return {
+    name: 'anchor',
+    label: 'Anchor',
+    context: generate.apply(this, [
+      {
+        element: 'a',
+        href: '',
+      },
+    ]),
+  };
+};
+
+/**
+ * Modifier: Small
+ * @returns {object} fractal demo object
+ */
+const smallButton = function() {
+  return {
+    name: 'small',
+    label: 'Small',
+    context: generate.apply(this, [
+      {
+        size: 'small',
+      },
+    ]),
+  };
+};
+
+/**
+ * State: Disabled
+ * @returns {object} fractal demo object
+ */
+const disabledButton = function() {
+  return {
+    name: 'disabled',
+    label: 'Disabled',
+    context: generate.apply(this, [
+      {
+        disabled: true,
+      },
+    ]),
+  };
 };
 
 /**
  * Button demos
- * @type {fractalVariants}
+ * @returns {object} fractal variants
  */
-const options = {
-  variants,
-  modifiers: {
-    sizes: {
-      small,
+const demo = function() {
+  return {
+    variants: variantButtons.apply(this),
+    modifiers: {
+      types: {
+        anchor: anchorButton.apply(this),
+      },
+      sizes: {
+        small: smallButton.apply(this),
+      },
     },
-  },
-  // scenarios: {
-  //   iconOnly,
-  // },
-  states: {
-    disabled,
-  },
-  // themes: {
-  //   dark,
-  // },
-  // tests: {
-  //   title,
-  //   core,
-  //   all,
-  // },
+    states: {
+      disabled: disabledButton.apply(this),
+    },
+  };
 };
 
 /**
  * Button config
- * @type {global-typedefs.componentConfig}
+ * @param {string} prefix - selector prefix
+ * @returns {object} component configuration object
  */
-const component = {
-  label: 'Button',
-  default: 'primary',
-  variants: flattenDemosObject(options),
-  generate,
-  selectors,
-};
+module.exports = prefix => {
+  const config = {
+    selectors: prefixSelectors(buttonSelectors, prefix),
+  };
 
-module.exports = component;
+  return {
+    label: 'Button',
+    demo: demo.apply(config),
+    generate: generate.bind(config),
+    selectors: config.selectors,
+  };
+};
